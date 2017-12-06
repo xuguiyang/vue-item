@@ -22,6 +22,8 @@ import MyLi from './components/Commons/MyLi.vue'
 import MyUl from './components/Commons/MyUl.vue'
 import NavBar from './components/Commons/NavBar.vue';
 import Comment from "./components/Commons/Comment.vue";
+import MySwipe from "./components/Commons/MySwipe.vue";
+Vue.component(MySwipe.name,MySwipe)
 Vue.component(Comment.name,Comment)
 Vue.component(NavBar.name,NavBar);
 Vue.component(MyUl.name,MyUl);
@@ -41,6 +43,7 @@ import NewsDetail from './components/News/NewsDetail.vue'
 import PhotoList from './components/Photo/PhotoList.vue'
 import PhotoDetail from './components/Photo/PhotoDetail.vue'
 import GoodsList from './components/Goods/GoodsList.vue'
+import GoodsDetail from './components/Goods/GoodsDetail.vue'
 
 //路由组件  E
 
@@ -69,6 +72,7 @@ router.addRoutes([
     {name:'photo.list',path:'/photo/list/:categoryId',component:PhotoList},//图文列表
     {name:'photo.detail',path:'/photo/detail/:imgId',component:PhotoDetail},//图文详情
     {name:'goods.list',path:'/goods/list',component:GoodsList},//商品列表
+    {name:'goods.detail',path:'/goods/detail/:goodsId',component:GoodsDetail},//商品列表
     ]);
 
 // VueRouter E

@@ -1,10 +1,12 @@
 <template>
-    <div>
+    <div :style="'height:'+height">
+    <!-- <div style="height:627px"> -->
         <nav-bar title="商品列表"></nav-bar>
-        <ul>
-            <li v-for=" goods in goodsList" :key="goods.id">
-                <a>
-                    <img src="goods.img_url">
+        <mt-loadmore :bottom-method="loadBottom" ref="loadmore" :auto-fill="isAutoFill" :bottom-all-loaded="allLoaded">
+        <ul ref="ul">
+            <li v-for="goods in goodsList" :key="goods.id">
+                <router-link :to="{name:'goods.detail',params:{goodsId:goods.id}}">
+                    <img :src="goods.img_url">
                     <div class="title">{{goods.title|convertTitle(25)}}</div>
                     <div class="desc">
                         <div class="sell">
@@ -17,13 +19,13 @@
                             </div>
                             <div class="count">
                                 剩{{goods.stock_quantity}}件
-                             </div>
+                            </div>
                         </div>
                     </div>
-                </a>
+                </router-link>
             </li>
-
         </ul>
+    </mt-loadmore>
     </div>
 </template>
 <script>
@@ -31,12 +33,46 @@ export default{
     data(){
         return{
             goodsList:[],//商品列表
-            page:1,
+            isAutoFill:false,//是否自动检测，并调用loadBottom
+            allLoaded:false,//数据是否全部加载完毕，如果是，禁止函数调用
+            page:1, //页码
+            height:'',//根节点div高度
+        }
+    },
+    loadBottom(){
+        this.$axios.get(`getgoods?pageindex=${this.page}`)
+        .then(res=>{
+            //判断是否还有数据
+            if(res.data.message.length==0){
+                this.$toast({
+                    message:'提示:没有更多的数据了',
+                    duration:2000
+                })
+                // 禁止下来函数调用
+                this.allLoaded=true;
+                return
+            }
+            //追加下一页的数据
+            this.goodsList=this.goodsList.concat(res.data.message);
+            this.page ++;
+            this.$refs.loadmore.onBottomLoaded();
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    },
+    changeHeight(){
+        this.height=document.documentElement.clientHeight-this.appRefs.header.$el.offsetHeight -
+            this.appRefs.footer.$el.offsetHeight;
+    },
+    methods:{
+        loadBottom(){
+            console.log('上啦出发了');
         }
     },
     created(){
         // 获取路由参数
-        this.page = this.$router.query.page||1;
+        this.page = this.$route.query.page||1;
         // 发请求
         this.$axios.get(`getgoods?pageindex=${this.page}`)
         .then(res=>{
