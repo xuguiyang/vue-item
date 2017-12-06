@@ -21,6 +21,8 @@ Vue.filter('convertTitle',(value,limit)=>{
 import MyLi from './components/Commons/MyLi.vue'
 import MyUl from './components/Commons/MyUl.vue'
 import NavBar from './components/Commons/NavBar.vue';
+import Comment from "./components/Commons/Comment.vue";
+Vue.component(Comment.name,Comment)
 Vue.component(NavBar.name,NavBar);
 Vue.component(MyUl.name,MyUl);
 Vue.component(MyLi.name,MyLi);
@@ -37,8 +39,15 @@ import Search from './components/Search/Search.vue'
 import NewsList from './components/News/NewsList.vue'
 import NewsDetail from './components/News/NewsDetail.vue'
 import PhotoList from './components/Photo/PhotoList.vue'
+import PhotoDetail from './components/Photo/PhotoDetail.vue'
+import GoodsList from './components/Goods/GoodsList.vue'
 
 //路由组件  E
+
+//VuePreview 开始
+import VuePreview from 'vue-preview';
+Vue.use(VuePreview);
+//VuePreview 结束
 
 // VueRouter S
 import VueRouter from 'vue-router';
@@ -57,7 +66,9 @@ router.addRoutes([
     {name:'search',path:'/search',component:Search},//查找
     {name:'news.list',path:'/news/list',component:NewsList},//新闻列表
     {name:'news.detail',path:'/news/detail',component:NewsDetail},//新闻详情
-    {name:'photo.list',path:'/photo/list/:categoryId',component:PhotoList},//新闻详情
+    {name:'photo.list',path:'/photo/list/:categoryId',component:PhotoList},//图文列表
+    {name:'photo.detail',path:'/photo/detail/:imgId',component:PhotoDetail},//图文详情
+    {name:'goods.list',path:'/goods/list',component:GoodsList},//商品列表
     ]);
 
 // VueRouter E
