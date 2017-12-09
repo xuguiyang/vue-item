@@ -1,7 +1,8 @@
 <template>
-    <div>
+    <div class="tmpl">
         <div class="photo-bottom">
             <ul>
+
                 <li class="photo-comment">
                     <div>
                         <span>提交评论</span>
@@ -9,31 +10,33 @@
                     </div>
                 </li>
                 <li class="txt-comment">
-                    <textarea cols="50" v-model="content"></textarea>
+                    <textarea cols="50px" v-model="content"></textarea>
                 </li>
-                <li>
-                    <mt-button type="primary" size="large" @click="sendComment">发表评论</mt-button>
-                </li>
+                <mt-button type="primary" size="large" @click="sendComment">
+                    发表评论按钮
+                </mt-button>
                 <li class="photo-comment">
                     <div>
                         <span>评论列表</span>
-                        <span>666条评论</span>
+                        <span>44条评论</span>
                     </div>
                 </li>
             </ul>
-            <ul class="comment-list">
+           <ul class="comment-list">
                 <li v-for="(comment,index) in comments" :key="index">
                     {{comment.user_name}}：{{comment.content}} {{comment.add_time|convertTime}}
                 </li>
-                
+
             </ul>
-                <mt-button type="danger" size="large" plain @click="loadMore">加载更多{{page}}</mt-button>
+            <mt-button type="danger" size="large" plain @click="loadMore">
+                加载更多按钮
+            </mt-button>
         </div>
     </div>
 </template>
 <script>
-export default {
-    name:'comment',
+export default{
+   name:'comment',
     // 声明props
     props:['cid'],
     data(){
@@ -41,86 +44,69 @@ export default {
             comments:[],//评论信息
             page:1,//页码
             hasData:true,//是否还有数据
-            content:'',//评论内容
-            id:0, //当前主体id
+            content:'',
+            id:37
         }
     },
-    methods:{
-        //发表评论
+     methods:{
+        loadByPage(){
+            this.$axios.get(`getcomments/${this.id}?pageindex=${page}`)
+            .then(res=>{
+                this.comments = res.data.message;
+                this.page ++
+            })
+            .catc(err=>{
+                console.log(err);
+            })
+        },
         sendComment(){
             //评论内容 v-model
-            this.$axios.post(`postcomment/${this.id}`
-                ,`content=${this.content}`)
+            this.$axios.post(`postcomment/${this.id}`,`content=${this.content}`)
             .then(res=>{
-                    //调用loadByPage函数
-                    this.loadByPage(1); //函数内部会自增
-                    //随即将组件内存储的页码归1
-                    this.page = 1;
-                    //清空当前数据
-                    this.content = '';
+                //调用loadByPage函数
+                this.loadByPage(1);
+                //随机将组件内部储存的页码归1
+                this.page=1;
+                this.content="";
             })
-            .catch(err=>console.log(err));
+            .catch(err=>{
+                console.log(err);
+            })
         },
         loadMore(){
             //判断是否有数据
             if(!this.hasData)return;
-
             this.$axios.get(`getcomments/${this.id}?pageindex=${this.page}`)
             .then(res=>{
                 this.comments = this.comments.concat(res.data.message);
-                
                 //设置数据检查结果
                 if(res.data.message.length == 0){
                     this.hasData = false;
                     this.$toast('没有更多数据了');
                     return;
                 }
-
                 //也要自增
                 this.page ++;
-
-
             })
             .catch(err=>console.log(err));
-        },
-        loadByPage(page){
-        
-                // ES6模板字符串
-                this.$axios.get(`getcomments/${this.id}?pageindex=${page}`)
-                .then(res=>{
-                    this.comments = res.data.message;
-                    //页码自增
-                    this.page ++;
-                })
-                .catch(err=> console.log(err) );
         }
     },
-    created(){
-        // //写死ID值测试
-        // this.id = 37;
-        //写死页码 1;
-        // this.page = this.$route.query.pageindex||1;
-        // //发请求
-        // // this.$axios.get('getcomments/'+id+'?pageindex='+pageindex)
-        // // ES6模板字符串
-        // this.$axios.get(`getcomments/${this.id}?pageindex=${this.page}`)
-        // .then(res=>{
-        //     this.comments = res.data.message;
-        //     //页码自增
-        //     this.page ++;
-        // })
-        // .catch(err=> console.log(err) );
-        
-        //创建组件的时候，接收父组件参数，传递值
-        this.id = this.cid;
+created(){
+    // 写死ID值测试
+    this.id=37;
+    //写死页码 1
+    this.page = this.$route.query.pageindex||1;
 
-        this.page = this.$route.query.pageindex||1;
-        //调用loadByPage函数
-        this.loadByPage(this.page);
-    },
+    this.$axios.get (`getcomments/${this.id}?pageindex=${this.page}`)
+    .then(res=>{
+        this.comments =res.data.message;
+        this.page ++;
+    })
+    .catch(err=>{
+        console.log(err);
+    })
 }
-
-
+}
 </script>
 <style scoped>
 .photo-comment > div span:nth-child(1) {
@@ -142,10 +128,12 @@ export default {
 
 .txt-comment {
     padding: 5 5;
+
 }
 
 .txt-comment textarea {
     margin-bottom: 5px;
+
 }
 
 .comment-list li {

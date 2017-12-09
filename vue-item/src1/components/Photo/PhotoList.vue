@@ -5,7 +5,7 @@
         <div class="photo-header">
             <ul>
                 <li v-for="category in categorys" :key="category.id">
-                    <a href="javascript:;" @click="getImgs(category.id)">{{category.title}}</a>
+                    <a @click="getImgs(category.id)">{{category.title}}</a>
                 </li>
             </ul>
         </div>
@@ -33,26 +33,41 @@
             imgs:[],//图片信息
         }
     },
-    
-    created(){
-        console.log('图文列表出生了');
-        //获取路由参数
-        let categoryId = this.$route.params.categoryId;
-        this.$axios.all([
-            this.$axios.get('getimgcategory'),
-            this.$axios.get('getimages/' + categoryId)
-        ])
-        .then(this.$axios.spread((categoryRes,imgRes)=>{
-                this.categorys = categoryRes.data.message;
-                this.categorys.unshift({
-                    id:0,title:'全部'
-                });
-                this.imgs = imgRes.data.message;
+    methods:{
+        getImgs(id){//按分类获取图片数据
+            this.$axios.get('getimages/' + id)
+            .then( res=>{
+                this.imgs = res.data.message;
                 if(this.imgs.length == 0){
                     this.$toast({
                       message: '提示:没有图片了',
                       duration: 5000
                     });
+                }
+            })
+            .catch( err=>{
+                console.log(err);
+            })
+        }
+    },
+    created(){
+
+        //获取路由参数
+        let categoryId = this.$route.params.categoryId;
+        this.$axios.all([
+            this.$axios.get('getimgcategory'),this .$axios.get('getimages/'+categoryId)
+        ])
+        .then(this.$axios.spread((categoryRes,imgRes)=>{
+            this.categorys = categoryRes.data.message;
+            this.categorys.unshift({
+                id:0,title:'全部'
+                });
+            this.imgs = imgRes.data.message;
+            if(this.imgs.length == 0){
+                this.$toast({
+                    message:'提示:没有图片了',
+                    duration:5000
+                 })
                 }
             })
         )
@@ -74,24 +89,7 @@
 
         this.getImgs(to.params.categoryId);
         next();
-        
-    },
-    methods:{
-        getImgs(id){//按分类获取图片数据
-            this.$axios.get('getimages/' + id)
-            .then( res=>{
-                this.imgs = res.data.message;
-                if(this.imgs.length == 0){
-                    this.$toast({
-                      message: '提示:没有图片了',
-                      duration: 5000
-                    });
-                }
-            })
-            .catch( err=>{
-                console.log(err);
-            })
-        }
+
     },
  }
 

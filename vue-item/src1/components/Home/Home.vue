@@ -1,25 +1,28 @@
 <template>
     <div>
         <my-swipe url="getlunbo"></my-swipe>
-        <!-- 下有九宫格 -->
+
+        <!-- 九宫格 -->
         <my-ul>
-             <my-li v-for="(r,index) in homeRouters" :key="index">
+            <my-li v-for="(r,index) in homeRouters" :key="index">
                 <router-link :to="r.router">
-                   <div :class="'back-img ' + r.className">
-                       {{r.title}}
-                   </div>
+                    <div :class="'back-img '+r.className">
+                            {{r.title}}
+                    </div>
                 </router-link>
             </my-li>
-        </my-ul>
 
+        </my-ul>
     </div>
 </template>
 <script>
-    export default {
+  export default {
+
         data(){
             return {
+
                 homeRouters:[{
-                    className:'news',
+                     className:'news',
                     title:'新闻列表',
                     router:{name:'news.list'}
                 },{
@@ -29,7 +32,7 @@
                 },{
                     className:'goods',
                     title:'商品列表',
-                    router:{name:'goods.list',query:{page:1} }
+                    router:{name:'goods.list',query:{page:1}}
                 },{
                     className:'feedback',
                     title:'留言反馈',
@@ -45,7 +48,9 @@
                 }]
             }
         }
-    }
+
+
+}
 </script>
 <style scoped>
 

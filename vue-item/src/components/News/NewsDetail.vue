@@ -1,10 +1,10 @@
 <template>
     <div>
-        <nav-bar title="新闻详情"></nav-bar>
+        <nav-bar :title="title"></nav-bar>
         <div class="news-title">
-            <p>{{newsInfo.title|convertTitle(15)}}</p>
+            <p>{{newsInfo.title}}</p>
             <div>
-                <span>{{newsInfo.click}}点击</span>
+                <span>{{newsInfo.click}}次点击</span>
                 <span>分类:民生经济</span>
                 <span>添加时间:{{newsInfo.add_time|convertTime}}</span>
             </div>
@@ -14,26 +14,42 @@
 </template>
 <script>
 export default {
-    created(){
-        //获取路由的参数
-        let newsId = this.$route.query.newsId;
-        //发请求
-        this.$axios.get('getnew/'+newsId)
-        .then(res=>{
-             console.log(res.data.message[0]);
-            this.newsInfo = res.data.message[0];
-        })
-        .catch(err=>{
-            console.log(err);
-        })
-    },
     data(){
         return {
             newsInfo:{}, //新闻详情
+            title:'',//标题
         }
     },
+    beforeRouteEnter (to, from, next) {
+        // console.log(from.name);
+      let title = '详情列表';
+      switch(from.name){
+        case 'goods.detail':
+            title = '商品图文介绍';
+            break;
+        case 'news.list':
+            title = '新闻详情';
+            break;
+      }
+      //放行并操作组件实例
+      next(vm => {
+        // 通过 `vm` 访问组件实例
+            vm.title = title;
+      });
 
+    },
+    created(){
+        //1:获取路由参数
+        let newsId = this.$route.query.newsId;
+        //2:发请求
+        this.$axios.get('getnew/' + newsId)
+        .then(res=>{
+            console.log(res.data.message[0]);
+            this.newsInfo = res.data.message[0];
 
+        })
+        .catch(err =>  console.log(err) );
+    }
 }
 
 </script>

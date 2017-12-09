@@ -3,7 +3,7 @@
          <div class="cms-s-header">
             <h1 @click="goback">&nbsp<</h1>
             <h2 class="page-title">{{title}}</h2>
-          </div> 
+          </div>
     </div>
 </template>
 <script>
